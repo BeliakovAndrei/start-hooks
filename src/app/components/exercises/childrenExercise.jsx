@@ -1,25 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import CollapseWrapper from "../common/collapse";
 import PropTypes from "prop-types";
-
-const ReactChildrenComponent = ({ children }) => {
-    const [data, setData] = useState({});
-    useEffect(() => {
-        console.log(data);
-    }, [data]);
-    const handleChange = (target) => {
-        setData((prevState) => ({ ...prevState, [target.name]: target.value }));
-    };
-    return React.Children.map(children, (child) => {
-        const config = {
-            ...child.props,
-            onChange: handleChange,
-            value: data[child.props.name] || ""
-        };
-
-        return React.cloneElement(child, config);
-    });
-};
 
 const ChildrenExercise = () => {
     return (
@@ -31,22 +12,26 @@ const ChildrenExercise = () => {
                 <code>React.Children.map</code> так и{" "}
                 <code>React.Children.toArray</code>
             </p>
-
-            <Component />
-            <Component />
-            <Component />
+            <ComponentList>
+                <Component />
+                <Component />
+                <Component />
+            </ComponentList>
         </CollapseWrapper>
     );
 };
-
-const Component = () => {
-    return <div>Компонент списка</div>;
+const ComponentList = ({ children }) => {
+    return React.Children.map(children, (child, index) => {
+        return React.cloneElement(child, { value: index + 1 });
+    });
+};
+const Component = ({ value }) => {
+    console.log(value);
+    return <div>{value + " " + "Компонент списка"}</div>;
 };
 
-ReactChildrenComponent.propTypes = {
-    children: PropTypes.oneOfType([
-        PropTypes.arrayOf(PropTypes.node),
-        PropTypes.node
-    ])
+Component.propTypes = {
+    value: PropTypes.number
 };
+
 export default ChildrenExercise;
